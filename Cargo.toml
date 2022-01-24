@@ -1,0 +1,29 @@
+[package]
+name = "dfs"
+version = "0.1.0"
+edition = "2021"
+authors = ["Federico Stra <stra.federico@gmail.com>"]
+description = "Dotfiles synchronizer"
+license = "MIT"
+repository = "https://github.com/FedericoStra/dfs"
+keywords = ["dotfiles", "configuration", "cli", "utility"]
+categories = ["command-line-utilities", "config"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+anyhow = { version = "1.0.53", features = ["backtrace"] }
+clap = { version = "3.0.10", features = ["derive", "cargo"] }
+directories = "4.0.1"
+env_logger = { version = "0.9.0", optional = true }
+log = { version = "0.4.14", optional = true }
+thiserror = "1.0.30"
+
+[features]
+default = ["build_binary"]
+build_binary = ["logging"]
+logging = ["env_logger", "log"]
+
+[[bin]]
+name = "dfs"
+required-features = ["build_binary"]
