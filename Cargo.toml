@@ -20,10 +20,10 @@ log = { version = "0.4.14", optional = true }
 thiserror = "1.0.30"
 
 [features]
-default = ["build_binary"]
-build_binary = ["logging"]
+default = ["build-binary"]
+build-binary = ["logging"]
 logging = ["env_logger", "log"]
 
 [[bin]]
 name = "dfs"
-required-features = ["build_binary"]
+required-features = ["build-binary"]
