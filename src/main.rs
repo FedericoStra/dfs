@@ -76,10 +76,20 @@ enum ProfileCommand {
         name: String,
     },
 
+    /// Create a new profile
+    New {
+        /// Profile name
+        name: String,
+    },
+
     /// Remove a profile
     Remove {
         /// Profile to remove
         name: String,
+
+        /// Do not actually remove the profile
+        #[clap(short, long)]
+        dry_run: bool,
     },
 }
 
