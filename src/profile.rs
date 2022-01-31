@@ -1,6 +1,6 @@
 use log::{debug, info, trace, warn};
 
-use anyhow::Context;
+use anyhow::{ensure, Context};
 
 use crate::dirs::ProjectDirs;
 use crate::ProfileCommand;
@@ -41,12 +41,20 @@ pub(crate) fn run(cmd: ProfileCommand, dirs: &ProjectDirs) -> anyhow::Result<()>
             std::fs::create_dir_all(data_dir)
                 .with_context(|| format!("cannot create data dir {:?}", data_dir))?;
             let profile_dir = data_dir.join(&name);
-            std::fs::create_dir(&profile_dir)
+            std::fs::create_dir_all(&profile_dir)
                 .with_context(|| format!("cannot create profile dir {:?}", profile_dir))?;
-            std::process::Command::new("git")
+            let status = std::process::Command::new("git")
                 .arg("init")
                 .current_dir(&profile_dir)
-                .status()?;
+                .spawn()
+                .with_context(|| format!("cannot execute \"git\""))?
+                .wait()
+                .with_context(|| format!("\"git\" execution failed"))?;
+            ensure!(
+                status.success(),
+                "\"git\" returned with exit status {}",
+                status
+            );
             info!("new profile created at {:?}", profile_dir);
         }
         ProfileCommand::Remove { name, dry_run } => {
