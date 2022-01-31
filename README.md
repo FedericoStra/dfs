@@ -14,3 +14,55 @@ This is a work in progress, at a very early stage of development.
 ```
 dfs help
 ```
+
+## Structure of the available commands
+
+This is a sketch of the intended structure and does not reflect the actual implementation at the moment:
+
+- config
+    + init
+    + show
+- status
+- profile
+    + list
+    + new
+    + remove
+    + activate
+    + deactivate
+- link
+- unlink
+- add
+- remove
+
+## How to
+
+### List available profiles
+
+```bash
+dfs profile list
+```
+
+### Create a new profile
+
+```bash
+dfs profile new <name>
+```
+
+### Activate a profile
+
+This will add symlinks for every tracked file.
+Add `--force` to allow overwriting files which are not symlinks.
+
+```bash
+dfs profile activate <name>
+```
+
+### Selectively link/unlink files from the profile
+
+`link` creates a symlink for the specified paths if they are tracked by the current profile.
+`unlink` materializes (converts from symlinks to actual files) the specified tracked paths.
+
+```bash
+dfs link <path>...
+dfs unlink <path>...
+```
