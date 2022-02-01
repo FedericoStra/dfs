@@ -1,6 +1,8 @@
-use log::{debug, info};
-
 use anyhow::Context;
+use std::io::Write;
+// use config::{Config, Environment, File};
+use log::{debug, info};
+use serde::{Deserialize, Serialize};
 
 use crate::dirs::{ensure_project_dirs, ProjectDirs};
 use crate::ConfigCommand;
@@ -14,6 +16,11 @@ use crate::ConfigCommand;
 //         source: std::io::Error,
 //     },
 // }
+
+#[derive(Debug, Default, Serialize, Deserialize)]
+pub struct Configuration {
+    profile: Option<String>,
+}
 
 pub(crate) fn run(cmd: ConfigCommand, dirs: &ProjectDirs) -> anyhow::Result<()> {
     fn report_dir(qual: &str, dir: &std::path::Path) {
@@ -33,7 +40,17 @@ pub(crate) fn run(cmd: ConfigCommand, dirs: &ProjectDirs) -> anyhow::Result<()> 
         }
         ConfigCommand::Init => {
             debug!("executing `config init`");
-            ensure_project_dirs(dirs).context("cannot initialize config")?
+            ensure_project_dirs(dirs).context("cannot initialize config")?;
+            let conf_file_path = dirs.config_dir().join("config.toml");
+            let mut configuration = Configuration::default();
+            configuration.profile = Some("default".to_string());
+            let conf_string = toml::to_string(&configuration)?;
+            let mut conf_file = std::fs::File::create(&conf_file_path)
+                .with_context(|| format!("cannot open configuration file {:?}", conf_file_path))?;
+            conf_file
+                .write(conf_string.as_ref())
+                .with_context(|| format!("cannot write configuration file {:?}", conf_file_path))?;
+            info!("config initialized");
         }
         ConfigCommand::Purge { force } => {
             debug!("executing `config purge`");

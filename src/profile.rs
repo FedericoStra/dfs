@@ -1,6 +1,5 @@
-use log::{debug, info, trace, warn};
-
 use anyhow::{ensure, Context};
+use log::{debug, info, trace, warn};
 
 use crate::dirs::ProjectDirs;
 use crate::ProfileCommand;
