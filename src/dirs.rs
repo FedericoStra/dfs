@@ -1,3 +1,7 @@
+use log::{debug, info};
+
+use anyhow::Context;
+
 pub use directories::ProjectDirs;
 
 pub fn project_dirs() -> anyhow::Result<ProjectDirs> {
@@ -8,4 +12,15 @@ pub fn project_dirs() -> anyhow::Result<ProjectDirs> {
         log::warn!("cannot determine the home directory");
         anyhow::bail!("cannot obtain project directories names");
     }
+}
+
+pub fn ensure_project_dirs(dirs: &ProjectDirs) -> anyhow::Result<()> {
+    debug!("{:?}", dirs);
+    std::fs::create_dir(dirs.config_dir())
+        .with_context(|| format!("cannot create config dir {:?}", dirs.config_dir()))?;
+    info!("created config dir: {:?}", dirs.config_dir());
+    std::fs::create_dir(dirs.data_dir())
+        .with_context(|| format!("cannot create data dir {:?}", dirs.data_dir()))?;
+    info!("created data dir: {:?}", dirs.data_dir());
+    Ok(())
 }
