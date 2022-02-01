@@ -59,6 +59,13 @@ enum ConfigCommand {
 
     /// Show the current configuration
     Show,
+
+    /// Purge everything. Use with care!
+    Purge {
+        /// Fire!
+        #[clap(short, long)]
+        force: bool,
+    },
 }
 
 #[derive(Debug, Subcommand)]
